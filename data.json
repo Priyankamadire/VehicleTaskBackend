@@ -1,0 +1,20 @@
+{
+  "scenarios": [
+    {
+      "name": "uio",
+      "time": 8,
+      "id": 1
+    }
+  ],
+  "vehicles": [
+    {
+      "name": "man",
+      "posX": 4,
+      "posY": 4,
+      "speed": 8,
+      "direction": "Towards",
+      "scenarioId": 1,
+      "id": 1
+    }
+  ]
+}
