@@ -32,7 +32,7 @@ Steps to Clone Backend
 Step 1 : Create a folder 
 Step 2 : go to power shell type this commands
     -> npm init -y
-    -> npm install package-name
-   install all packages from package.json file
-Step 3 : Copy and Paste app.js and data.json files 
+    -> npm install
+ install all the packages listed in the package.json file by running
+Step 3 : Copy Project Files
 Step 4 : node app.js/nodemon app.js
