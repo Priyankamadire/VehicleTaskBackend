@@ -8,9 +8,6 @@ app.use(bodyParser.json());
 
 const DATA_FILE = "./data.json";
 
-// Read data from JSON file
-
-// cors.use();
 app.use(cors());
 const readData = (callback) => {
   fs.readFile(DATA_FILE, "utf8", (err, data) => {
@@ -22,14 +19,12 @@ const readData = (callback) => {
   });
 };
 
-// Helper function to write data to file
 const writeData = (data, callback) => {
   fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), (err) => {
     callback(err);
   });
 };
 
-// GET endpoint to retrieve all data
 app.get("/data", (req, res) => {
   readData((err, data) => {
     if (err) {
@@ -39,10 +34,10 @@ app.get("/data", (req, res) => {
     }
   });
 });
+
 app.get("/", (req, res) => {
   res.send("Hi hello");
 });
-// POST endpoint to add a scenario
 
 app.post("/scenario", (req, res) => {
   readData((err, data) => {
@@ -85,7 +80,6 @@ app.put("/updatescenario/:id", (req, res) => {
       return;
     }
 
-    // Update the scenario with the provided ID
     data.scenarios[index] = { ...data.scenarios[index], ...updatedScenario };
 
     writeData(data, (err) => {
@@ -101,27 +95,24 @@ app.put("/updatescenario/:id", (req, res) => {
 app.get("/getvechcount/:id", (req, res) => {
   const scenarioId = parseInt(req.params.id);
 
-  // Read data from JSON file
   readData((err, data) => {
     if (err) {
       res.status(500).send("Error reading data file");
       return;
     }
 
-    const scenarios = data.scenarios || []; // Extract scenarios from data
+    const scenarios = data.scenarios || [];
     const scenario = scenarios.find((scenario) => scenario.id === scenarioId);
     if (!scenario) {
       res.status(404).send("Scenario not found");
       return;
     }
 
-    // Find vehicles for the given scenarioId
-    const vehicles = data.vehicles || []; // Extract vehicles from data
+    const vehicles = data.vehicles || [];
     const vehiclesForScenario = vehicles.filter(
       (vehicle) => vehicle.scenarioId === scenarioId
     );
 
-    // Count the number of vehicles
     const vehicleCount = vehiclesForScenario.length;
 
     res.status(200).json({ scenarioId, vehicleCount });
@@ -129,7 +120,7 @@ app.get("/getvechcount/:id", (req, res) => {
 });
 
 app.get("/getscenariobyid/:id", (req, res) => {
-  const scenarioId = parseInt(req.params.id); // Convert ID to number
+  const scenarioId = parseInt(req.params.id);
 
   readData((err, data) => {
     if (err) {
@@ -144,14 +135,12 @@ app.get("/getscenariobyid/:id", (req, res) => {
       res.status(404).send("Scenario not found");
       return;
     }
-
-    // Scenario found, send it back as a response
     res.status(200).json(scenario);
   });
 });
 
 app.delete("/scenario/:id", (req, res) => {
-  const scenarioId = parseInt(req.params.id); // Convert ID to number
+  const scenarioId = parseInt(req.params.id);
 
   readData((err, data) => {
     if (err) {
@@ -167,7 +156,6 @@ app.delete("/scenario/:id", (req, res) => {
       return;
     }
 
-    // Remove the scenario with the provided ID
     data.scenarios.splice(index, 1);
 
     writeData(data, (err) => {
@@ -181,30 +169,27 @@ app.delete("/scenario/:id", (req, res) => {
 });
 
 app.delete("/allscenario", (req, res) => {
-  // Read data from the data file
   readData((err, data) => {
     if (err) {
       res.status(500).send("Error reading data file");
       return;
     }
 
-    // Remove all scenarios from the data
     data.scenarios = [];
 
-    // Write the updated data back to the file
     writeData(data, (err) => {
       if (err) {
         res.status(500).send("Error writing to data file");
         return;
       }
-      // Send success response
+
       res.status(204).send();
     });
   });
 });
 
 app.delete("/vehicle/:id", (req, res) => {
-  const vehicleId = parseInt(req.params.id); // Convert ID to number
+  const vehicleId = parseInt(req.params.id);
 
   readData((err, data) => {
     if (err) {
@@ -220,7 +205,6 @@ app.delete("/vehicle/:id", (req, res) => {
       return;
     }
 
-    // Remove the vehicle with the provided ID
     data.vehicles.splice(index, 1);
 
     writeData(data, (err) => {
@@ -233,7 +217,7 @@ app.delete("/vehicle/:id", (req, res) => {
   });
 });
 app.put("/updatevehicle/:id", (req, res) => {
-  const vehicleId = parseInt(req.params.id); // Convert ID to number
+  const vehicleId = parseInt(req.params.id);
   const updatedvehicle = req.body;
 
   readData((err, data) => {
@@ -250,7 +234,6 @@ app.put("/updatevehicle/:id", (req, res) => {
       return;
     }
 
-    // Update the vehicle with the provided ID
     data.vehicles[index] = { ...data.vehicles[index], ...updatedvehicle };
 
     writeData(data, (err) => {
@@ -263,25 +246,23 @@ app.put("/updatevehicle/:id", (req, res) => {
   });
 });
 
-// GET endpoint to retrieve scenarios
 app.get("/getscenario", (req, res) => {
   readData((err, data) => {
     if (err) {
       res.status(500).send("Error reading data file");
     } else {
-      const scenarios = data.scenarios || []; // Extract scenarios from data
+      const scenarios = data.scenarios || [];
       res.send(scenarios);
     }
   });
 });
 
-// GET endpoint to retrieve vehicles
 app.get("/getvehicle", (req, res) => {
   readData((err, data) => {
     if (err) {
       res.status(500).send("Error reading data file");
     } else {
-      const vehicles = data.vehicles || []; // Extract vehicles from data
+      const vehicles = data.vehicles || [];
       res.send(vehicles);
     }
   });
@@ -293,22 +274,16 @@ app.get("/vehicles/:scenarioId", (req, res) => {
     return res.status(400).json({ message: "Missing scenarioId parameter" });
   }
 
-  // Read data from JSON file
   readData((err, data) => {
     if (err) {
       return res.status(500).send("Error reading data file");
     }
 
-    // Find vehicles by scenarioId
     const filteredVehicles = data.vehicles.filter(
       (vehicle) => vehicle.scenarioId === parseInt(scenarioId)
     );
     res.json(filteredVehicles);
   });
-});
-
-app.get("/scenarios", (req, res) => {
-  res.json(data.scenarios);
 });
 
 app.get("/vehiclesbyid/:id", (req, res) => {
@@ -317,13 +292,11 @@ app.get("/vehiclesbyid/:id", (req, res) => {
     return res.status(400).json({ message: "Missing id parameter" });
   }
 
-  // Read data from JSON file
   readData((err, data) => {
     if (err) {
       return res.status(500).send("Error reading data file");
     }
 
-    // Find vehicles by scenarioId (assuming id is the scenarioId)
     const filteredVehicles = data.vehicles.filter(
       (vehicle) => vehicle.id === parseInt(id)
     );
@@ -339,8 +312,8 @@ app.post("/vehicle", (req, res) => {
     }
 
     const newVehicle = req.body;
-    newVehicle.id = Date.now(); // Generate a unique ID
-    newVehicle.serialNumber = data.vehicles.length + 1; // Generate serial number
+    newVehicle.id = Date.now();
+    newVehicle.serialNumber = data.vehicles.length + 1;
     data.vehicles = data.vehicles || [];
     data.vehicles.push(newVehicle);
 
