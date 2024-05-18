@@ -43,26 +43,6 @@ app.get("/", (req, res) => {
   res.send("Hi hello");
 });
 // POST endpoint to add a scenario
-// app.post("/scenario", (req, res) => {
-//   readData((err, data) => {
-//     if (err) {
-//       res.status(500).send("Error reading data file");
-//       return;
-//     }
-//     const newScenario = req.body;
-//     newScenario.id = Date.now(); // Generate a unique ID
-//     data.scenarios = data.scenarios || [];
-//     data.scenarios.push(newScenario);
-
-//     writeData(data, (err) => {
-//       if (err) {
-//         res.status(500).send("Error writing to data file");
-//       } else {
-//         res.status(201).send(newScenario);
-//       }
-//     });
-//   });
-// });
 
 app.post("/scenario", (req, res) => {
   readData((err, data) => {
@@ -70,12 +50,11 @@ app.post("/scenario", (req, res) => {
       res.status(500).send("Error reading data file");
       return;
     }
+
     const newScenario = req.body;
+    newScenario.id = Date.now(); // Generate a unique ID
+    newScenario.serialNumber = data.scenarios.length + 1; // Generate serial number
     data.scenarios = data.scenarios || [];
-
-    // Generate ID as the length of the existing scenarios array plus one
-    newScenario.id = data.scenarios.length + 1;
-
     data.scenarios.push(newScenario);
 
     writeData(data, (err) => {
@@ -358,12 +337,11 @@ app.post("/vehicle", (req, res) => {
       res.status(500).send("Error reading data file");
       return;
     }
+
     const newVehicle = req.body;
+    newVehicle.id = Date.now(); // Generate a unique ID
+    newVehicle.serialNumber = data.vehicles.length + 1; // Generate serial number
     data.vehicles = data.vehicles || [];
-
-    // Generate ID as the length of the existing vehicles array plus one
-    newVehicle.id = data.vehicles.length + 1;
-
     data.vehicles.push(newVehicle);
 
     writeData(data, (err) => {
